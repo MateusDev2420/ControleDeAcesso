@@ -62,8 +62,9 @@ public class ControleDeAcesso {
                     |       3- Atualizar cadastro por id                    |
                     |       4- Deletar um cadastro por id                   |
                     |       5- Associar TAG ou cartão de acesso ao usuário  |
-                    |       6- Sair                                         |
-                    _________________________________________________________
+                    |       6- Pesquisar registros do usuário por ID        |
+                    |       7- Sair                                         |
+                    |_______________________________________________________|
                     """;
             System.out.println(menu);
             opcao = scanner.nextInt();
@@ -86,13 +87,16 @@ public class ControleDeAcesso {
                     aguardarCadastroDeIdAcesso();
                     break;
                 case 6:
+                    pesquisarRegistrosPorId();
+                    break;
+                case 7:
                     System.out.println("Fim do programa!");
                     break;
                 default:
                     System.out.println("Opção inválida!");
             }
 
-        } while (opcao != 6);
+        } while (opcao != 7);
     }
 
     private static void aguardarCadastroDeIdAcesso() {
@@ -149,6 +153,7 @@ public class ControleDeAcesso {
                 novaMatrizRegistro[linhaNovoRegistro][0] = matrizCadastro[linhas][2]; // Assume que o nome do usuário está na coluna 3
                 novaMatrizRegistro[linhaNovoRegistro][1] = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
                 novaMatrizRegistro[linhaNovoRegistro][2] = matrizCadastro[linhas][5];
+                novaMatrizRegistro[linhaNovoRegistro][3] = matrizCadastro[linhas][0];
                 System.out.println("Usuário encontrado: " +
                         novaMatrizRegistro[linhaNovoRegistro][0] + " - " +
                         novaMatrizRegistro[linhaNovoRegistro][1]);
@@ -358,6 +363,32 @@ public class ControleDeAcesso {
             throw new RuntimeException(e);
         }
     }
+
+    private static void pesquisarRegistrosPorId() {
+        System.out.print("Digite o ID do usuário para pesquisar os registros: ");
+        String idUsuario = scanner.nextLine();
+
+        boolean encontrouRegistros = false;
+        StringBuilder registrosDoUsuario = new StringBuilder();
+
+        // Cabeçalho
+        registrosDoUsuario.append(String.format("%-25s | %-10s | %-25s | %-10s\n", "ID", "Nome", "Horário", "Imagem"));
+
+        // Procura na matriz de registros de acesso
+        for (String[] registro : matrizRegistrosDeAcesso) {
+            if (registro[3].equals(idUsuario)) { //se o ID da matriz registros de acesso for igual ao que o usuário digitou
+                encontrouRegistros = true;
+                registrosDoUsuario.append(String.format("%-25s | %-10s | %-25s\n", registro[3], registro[0], registro[1]));
+            }
+        }
+
+        if (encontrouRegistros) {
+            System.out.println("Registros encontrados:\n" + registrosDoUsuario);
+        } else {
+            System.out.println("Nenhum registro encontrado para o ID: " + idUsuario);
+        }
+    }
+
 
 
     private static void verificarEstruturaDeDiretorios() {

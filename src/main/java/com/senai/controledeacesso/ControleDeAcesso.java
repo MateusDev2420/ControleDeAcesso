@@ -63,7 +63,8 @@ public class ControleDeAcesso {
                     |       4- Deletar um cadastro por id                   |
                     |       5- Associar TAG ou cartão de acesso ao usuário  |
                     |       6- Pesquisar registros do usuário por ID        |
-                    |       7- Sair                                         |
+                    |       7- Deletar todos os registros de acesso         |
+                    |       8- Sair                                         |
                     |_______________________________________________________|
                     """;
             System.out.println(menu);
@@ -90,13 +91,15 @@ public class ControleDeAcesso {
                     pesquisarRegistrosPorId();
                     break;
                 case 7:
+                    deletarTodosOsRegistros();
+                case 8:
                     System.out.println("Fim do programa!");
                     break;
                 default:
                     System.out.println("Opção inválida!");
             }
 
-        } while (opcao != 7);
+        } while (opcao != 8);
     }
 
     private static void aguardarCadastroDeIdAcesso() {
@@ -280,12 +283,12 @@ public class ControleDeAcesso {
             if (i == idUsuario)
                 continue;
             novaMatriz[j] = matrizCadastro[i];
-            novaMatriz[j][0]= String.valueOf(j);
+            novaMatriz[j][0] = String.valueOf(j);
             j++;
         }
 
         matrizCadastro = novaMatriz;
-        matrizCadastro[0]=cabecalho;
+        matrizCadastro[0] = cabecalho;
         salvarDadosNoArquivo();
         System.out.println("-----------------------Deletado com sucesso------------------------\n");
         idUsuarioRecebidoPorHTTP = 0;
@@ -389,7 +392,18 @@ public class ControleDeAcesso {
         }
     }
 
+    private static void deletarTodosOsRegistros() {
 
+        matrizRegistrosDeAcesso = new String[][]{{"", "", ""}};
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(registroDeDados));
+            bufferedWriter.write("");
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Registros deletados com sucesso!");
+    }
 
     private static void verificarEstruturaDeDiretorios() {
         // Verifica se a pasta ControleDeAcesso existe, caso contrário, cria
@@ -400,6 +414,7 @@ public class ControleDeAcesso {
                 System.out.println("Falha ao criar a pasta ControleDeAcesso.");
             }
         }
+
 
         // Verifica se o arquivo bancoDeDados.txt existe, caso contrário, cria
         if (!arquivoBancoDeDados.exists()) {
